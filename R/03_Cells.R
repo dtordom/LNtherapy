@@ -4,4 +4,11 @@
 ##########################
 ## Get associations between cell proportions and response/non respose to LN drugs
 
+library("ggplot2")
+linrary("ggprubr")
+set.seed(123456788)
 
+load("DEGS.RData")
+
+## ······································································· Step 1 
+## Load data
