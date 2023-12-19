@@ -40,7 +40,7 @@ orderHeatmap<-function(exp,met,var){
   ordenPats<-NULL
   for(i in 1:length(vars)){    
     exp.i<-exp[,rownames(met[met[,var]==vars[i],])]
-    pl<-pheatmap(exp.i,scale="row",show_colnames = F,cluster_cols = T, annotation_col = clin.tmp,
+    pl<-pheatmap(exp.i,scale="row",show_colnames = F,cluster_cols = T,
                  cluster_rows = T, show_rownames = T, border_color = NA,
                  breaks=seq(-1.5,1.5,length.out = 100), fontsize = 5,
                  color = colorRampPalette(c("deepskyblue4","white","coral2"))(100))  
