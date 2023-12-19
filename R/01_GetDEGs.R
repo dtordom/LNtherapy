@@ -50,8 +50,8 @@ res<-limma.DEG(data=dat.tmp,
 table(ifelse(res$adj.P.Val<=0.05,T,F))
 
 data.list<-list(dat.tmp,met.tmp); names(data.list)<-c("data","clin")
-DEGS[["MMF"]]<-res
-DATA[["MMF"]]<-data.list
+DEGS[["AZA"]]<-res
+DATA[["AZA"]]<-data.list
 
 ## HC ------
 met.tmp<-metadata[metadata$Drug_group=="HC" & metadata$Diagnosis!="Healthy",]
