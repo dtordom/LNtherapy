@@ -12,6 +12,9 @@ library("fgsea")
 library("ggplot2")
 library("stringr")
 library("UpSetR")
+library("ggrepel")
+library("ggpubr")
+library("cowplot")
 library("ComplexHeatmap")
 
 load("Dataset.RData")
@@ -133,12 +136,66 @@ lt = list(MMF = unname(as.character(unlist(degs$mmf))),
 m1 = make_comb_mat(lt,mode = "distinc")
 UpSet(m1, set_order = c("MMF", "AZA", "HC","SOC"), comb_order = order(comb_size(m1),decreasing = T))
 
+## Volcano plot
+PLOTS<-list()
+for(j in 1:length(DEGS)){
+  volcan<-DEGS[[j]]
+  volcan$P.Value<-(-log10(volcan$P.Value))
+  volcan$adj.P.Val<-(-log10(volcan$adj.P.Val))
+  volcan$genes<-rownames(volcan)
+  
+  volcan$color<-ifelse(volcan$adj.P.Val>1.30103,"#619bc2",
+                       ifelse(volcan$P.Value>1.30103,"#86cdeb","#a8a8a8"))
+  volcan$label<-volcan$genes
+  for(i in 1:nrow(volcan)){
+    if(volcan$adj.P.Val[i]<1.30103){
+      volcan$label[i]=""
+    }
+  }
+  p1<-ggplot(data=volcan, aes(x=logFC, y=P.Value, color=color,label=label)) + 
+    geom_point(size=0.7) + theme_classic()+ 
+    xlim(min(volcan$logFC)+(min(volcan$logFC)*0.15),max(volcan$logFC)+(max(volcan$logFC)*0.15))+
+    geom_text_repel(color="black",size=1.75,point.padding = 1)+
+    scale_colour_manual(values = c("#619bc2","#86cdeb","#a8a8a8"))
+  PLOTS[[j]]<-p1
+}
+names(PLOTS)<-names(DEGS)
+
+## Heatmaps
 
 
 
+## Ratios
+PLOTS<-list()
+for(i in 1:length(DEGS)){
+  
+  x<-DEGS[[i]]
+  up<-x[x$adj.P.Val<=0.05 & x$logFC > 0,]
+  down<-x[x$adj.P.Val<=0.05 & x$logFC < 0,]
+  
+  plots<-list()
+  for(j in 1:length(DATA)){
+   tmp <-data.frame("group"=DATA[[j]]$clin[colnames(DATA[[j]]$data),"Response"],
+                 "ratio"=apply(DATA[[j]]$data[rownames(up),],2,mean) / 
+                   apply(DATA[[j]]$data[rownames(down),],2,mean),
+                 "drug"=rep(names(DATA)[j],ncol(DATA[[j]]$data)))
+   
+   p.tmp<-ggplot(tmp,aes(x=group,y=ratio)) + geom_jitter(color = "#333333",size=0.7) + 
+     geom_boxplot(outlier.alpha = 0,width = 0.5,fill = "lightgrey",alpha=0.8,fatten=0.5,lwd=0.5) + 
+     theme_classic() + 
+     theme(axis.line = element_line(linewidth=0.5),
+           axis.ticks = element_line(linewidth = 0.5))+
+     ggtitle(wilcox.test(tmp$ratio[tmp$group=="YES"],tmp$ratio[tmp$group!="YES"])$p.value) +
+     theme(plot.title = element_text(size = 4)) + ylim(0.7,1.2) 
+   plots[[j]]<-p.tmp
+  }
+  names(plots)<-names(DATA)
 
-
-
+  pbox<-ggarrange(plots[[1]],plots[[2]],plots[[3]],plots[[4]],
+                  ncol = 4, nrow = 1,legend = "none")
+  PLOTS[[i]]<-pbox
+}
+names(PLOTS)<-c("mmf","aza","hc","soc")
 
 
 
