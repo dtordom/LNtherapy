@@ -162,13 +162,31 @@ for(j in 1:length(DEGS)){
 names(PLOTS)<-names(DEGS)
 
 ## Heatmaps
-for(i in 1:length(DATA){
+PLOTS<-list()
+for(i in 1:length(DATA)){
+  tmp<-DATA[[i]]
+  genes<-DEGS[[i]]
+  genes<-genes[ifelse(genes$adj.P.Val<=0.05,T,F),];
+  genes$Genes<-rownames(genes)
+  clin.tmp<-tmp$clin
+  data.tmp<-tmp$data
+  clin.tmp<-clin.tmp[,colnames(clin.tmp) %in% c("Response","Sex","Age_onset","SLEDAI","PGA",
+                                              "MMF_or_AZA_dosis","Prednisone_dosis",
+                                              "Asa_dosis","Plaquenil")]
+  clin.tmp<-clin.tmp[,ifelse(apply(clin.tmp,2,function(x){length(table(x))})>1,T,F)]
+  clin.tmp$Age_onset<-as.numeric(clin.tmp$Age_onset)
+  data.tmp<-data.tmp[genes$Genes,rownames(clin.tmp)]
 
+  ordenPats<-orderHeatmap(exp = data.tmp, met = clin.tmp, var = "Response")
 
-
-
-  }
-
+  pi<-pheatmap(data.tmp[,ordenPats],scale="row",show_colnames = F,cluster_cols = F, annotation_col = clin.tmp,
+         cluster_rows = T, show_rownames = T, border_color = NA,
+         breaks=seq(-1.5,1.5,length.out = 100), fontsize = 5,
+         gaps_col = table(clin.tmp$Response)[1],
+         color = colorRampPalette(c("deepskyblue4","white","coral2"))(100))   
+  PLOTS[[i]]<-pi
+}
+names(PLOTS)<-names(DATA)
 
 ## Ratios
 PLOTS<-list()
@@ -201,8 +219,6 @@ for(i in 1:length(DEGS)){
   PLOTS[[i]]<-pbox
 }
 names(PLOTS)<-c("mmf","aza","hc","soc")
-
-
 
 ##--------------------------------------------------- Step3
 ## GSEA (similarity between Gene-signatures)
