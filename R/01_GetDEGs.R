@@ -120,7 +120,7 @@ down<-rownames(tmp)[ifelse(tmp$adj.P.Val<=0.05 & tmp$logFC<0,T,F)]
 soc<-list(up,down); names(soc)<-c("nR_down","nR_up")
 degs[["soc"]]<-soc
 
-saveRDS(degs,"geneListDEGs.RData")
+saveRDS(degs,"geneListDEGs.rds")
 
 rm(list=setdiff(ls(),c("DATA","DEGS","metadata","data","degs")))
 save.image("DEGS.RData")
