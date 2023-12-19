@@ -1,5 +1,5 @@
 ##########################
-## Patterns behind Cellcept response
+## Comparison of cell proportions between responder and non-responders
 ## R version 4.3.1 (2023-06-16)
 ##########################
 ## Get associations between cell proportions and response/non respose to LN drugs
