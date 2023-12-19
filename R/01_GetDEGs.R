@@ -6,6 +6,14 @@
 ## Load Gene expression data and metadata from:
 ## https://drive.google.com/drive/folders/15KVn3tckVPZKieCsSZizdi8bAQFZkOIC?usp=sharing
 
+set.seed(123456)
+library("pheatmap")
+library("fgsea")
+library("ggplot2")
+library("stringr")
+library("UpSetR")
+library("ComplexHeatmap")
+
 load("Dataset.RData")
 
 DEGS<-list()
@@ -117,14 +125,82 @@ save.image("DEGS.RData")
 ##--------------------------------------------------- Step2
 ## PLOTS (UpSet, Volcano, Heatmap, Ratios
 
+## UpSet plot
+lt = list(MMF = unname(as.character(unlist(degs$mmf))),
+          AZA = unname(as.character(unlist(degs$aza))),
+          HC = unname(as.character(unlist(degs$hc))),
+          SOC = unname(as.character(unlist(degs$soc))))
+m1 = make_comb_mat(lt,mode = "distinc")
+UpSet(m1, set_order = c("MMF", "AZA", "HC","SOC"), comb_order = order(comb_size(m1),decreasing = T))
+
+
+
+
+
+
+
 
 
 
 ##--------------------------------------------------- Step3
 ## GSEA (similarity between Gene-signatures)
 
+## 1. Comparison between drugs
+genes<-list(
+  "MMF.up"= rownames(DEGS$MMF[DEGS$MMF$logFC>0 & DEGS$MMF$adj.P.Val<=0.05,]),
+  "MMF.down"= rownames(DEGS$MMF[DEGS$MMF$logFC<0 & DEGS$MMF$adj.P.Val<=0.05,]),
+  "AZA.up" = rownames(DEGS$AZA[DEGS$AZA$logFC>0 & DEGS$AZA$adj.P.Val<=0.05,]),
+  "AZA.down" = rownames(DEGS$AZA[DEGS$AZA$logFC<0 & DEGS$AZA$adj.P.Val<=0.05,]),
+  "HC.up" = rownames(DEGS$HC[DEGS$HC$logFC>0 & DEGS$HC$adj.P.Val<=0.05,]),
+  "HC.down" = rownames(DEGS$HC[DEGS$HC$logFC<0 & DEGS$HC$adj.P.Val<=0.05,]),
+  "SOC.up" = rownames(DEGS$SOC[DEGS$SOC$logFC>0 & DEGS$SOC$adj.P.Val<=0.05,]),
+  "SOC.down" = rownames(DEGS$SOC[DEGS$SOC$logFC<0 & DEGS$SOC$adj.P.Val<=0.05,]))
+
+resfgsea<-lapply(DEGS,function(x){
+  tmp<- x[order(x$logFC,decreasing = T),]
+  stats<-tmp$logFC; names(stats)<-rownames(tmp)
+  res<-fgsea(pathways = genes,stats = stats)
+  return(res)})
+
+M<-do.call("rbind",lapply(names(resfgsea),function(x){
+  x<-cbind(rep(x,nrow(resfgsea[x][[1]])),resfgsea[x][[1]])}))
+colnames(M)[1]<-"Drug"
+M<-as.data.frame(M[,c("Drug","pathway","ES","NES")])
+M<-M[!str_detect(M$pathway,M$Drug),]
+
+## PLOT
+ggplot(M,aes(x=pathway,y=Drug))+theme_linedraw()+
+  geom_point(aes(colour = ES,size = abs(NES))) + 
+  theme(axis.text.x = element_text(size =8,angle = 90, vjust = 0.5, hjust=1),
+        axis.text.y = element_text(size=8),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())+
+  scale_colour_gradient2(low = "#2786a0",mid="white",high = "#c7522b") + 
+  geom_point(aes(size=abs(NES)),color="black",shape=1)
 
 
+## 2. Comparison between results using different response metrics (UrCrPrRatio and SRI-4)
+MMFresp2<-readRDS("MMF_resp2.rds")
+res<-limma.DEG(data=MMFresp2$MMF_resp2$data,
+               metadata = MMFresp2$MMF_resp2$clin,
+               covars = ~sex+act+mmfDosis+prednisone,
+               padj = "bonferroni")
+
+res<-res[order(res$logFC,decreasing = T),]
+stats<-res$logFC; names(stats)<-rownames(res)
+
+genes<-degs$mmf
+res<-fgsea(pathways = genes,stats = stats)
+
+## PLOT
+p1<-plotEnrichment(genes$nR_down,stats) 
+p2<-plotEnrichment(genes$nR_up,stats)
+p1$layers[[1]]$aes_params$colour <- '#c7522b'  
+p1$layers[[3]]$aes_params$colour <- '#c7522b'
+p2$layers[[1]]$aes_params$colour <- '#2786a0'
+p2$layers[[3]]$aes_params$colour <- '#6dbc86'
+p1
+p2
 
 ##--------------------------------------------------- Step4
 ## Functional analysis (qusage)
