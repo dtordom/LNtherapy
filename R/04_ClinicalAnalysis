@@ -7,10 +7,7 @@ set.seed(123456)
 
 ## Load Data
 ## https://drive.google.com/drive/folders/15KVn3tckVPZKieCsSZizdi8bAQFZkOIC?usp=sharing
-
-load("DEGS.RData")
-
-DEGS<-list()
-DATA<-list()
+load("ClinicalData.RData")
+load("DEGS.RData") ## Output of 01_GetDEGs.R
 
 ##--------------------------------------------------- Step1
