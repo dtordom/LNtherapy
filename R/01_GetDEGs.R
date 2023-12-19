@@ -166,6 +166,6 @@ for(i in 1:length(DATA)){
   
   QS.results[[i]]<-paths
 }
-names(QS.results)<-names(DATA)[i]
+names(QS.results)<-names(DATA)
 
 saveRDS(QS.results,"QusageResults.rds")
