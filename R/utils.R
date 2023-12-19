@@ -179,5 +179,94 @@ GetStats<-function(clin.tmp,var.table,bySamples=TRUE){
   return(RESULTS)
 }
 
+#################################################################
+## Function to plot expression of markers in single cell clusters
+
+markerDots<-function(seurat,
+                     genes,
+                     wd=1000,
+                     ht=680,
+                     stroke=0.3,
+                     path){
+  
+  require('pheatmap')
+  metadata<-seurat@meta.data
+  metadata$cell_id<-rownames(metadata)
+  
+  #genes<-str_to_title(genes)
+  genes<-intersect(genes,rownames(seurat@assays$RNA@data))
+  expression_matrix <- seurat@assays$RNA@data[genes,,drop=F]
+  
+  cell_markers <- expression_matrix %>%
+    Matrix::t() %>%
+    as.data.frame() %>%
+    rownames_to_column("cell_id") %>%
+    pivot_longer(cols = genes, names_to = "gene", values_to = "expression") %>%
+    left_join(metadata[,c("cell_id","seurat_clusters")])
+  
+  count_per_clusters <- unique(cell_markers[,c("cell_id","seurat_clusters")]) %>%
+    group_by(seurat_clusters) %>%
+    dplyr::summarise(cells = n())
+  
+  percentage_expression <- cell_markers %>%
+    mutate(bool = expression > 0) %>%
+    filter(bool) %>%
+    group_by(seurat_clusters,gene) %>%
+    dplyr::summarise(count = n()) %>%
+    left_join(count_per_clusters) %>%
+    mutate(percentage = (count / cells)*100)
+  
+  # Escalar la expresión por gen
+  expression_vals <- rbindlist(mclapply(unique(cell_markers$gene), function(gene_to_use){
+    expression_vals <- cell_markers[cell_markers$gene == gene_to_use,]
+    expression_vals$scale_vals <- scale(expression_vals$expression)
+    expression_vals
+  })) %>%
+    # Calcular la mediana de los valores escalados
+    group_by(seurat_clusters,gene) %>%
+    dplyr::summarise(median_expression = median(scale_vals)) %>%
+    left_join(percentage_expression)
+  
+  expression_vals$gene <- factor(expression_vals$gene, levels = unique(cell_markers$gene))
+  m<-expression_vals[,c("seurat_clusters","percentage","gene")]
+  m[is.na(m)]<-0; m<-as.data.frame(m)
+  
+  clusters<-as.numeric(names(table(m$seurat_clusters)))
+  tmp<-matrix(ncol=length(clusters),nrow=length(genes))
+  colnames(tmp)<-clusters; rownames(tmp)<-genes
+  
+  for(i in 1:length(genes)){
+    for(j in clusters){
+      punt<-j+1
+      tmp[i,punt]<-m[m$seurat_clusters==clusters[punt] & m$gene==genes[i],]$percentage
+    }
+  }
+  cl<-pheatmap(tmp,cluster_rows = F)
+  cl<-cl$tree_col$order
+  
+  expression_vals$seurat_clusters<-factor(x = expression_vals$seurat_clusters,
+                                          levels=colnames(tmp)[cl])
+  
+  tiff(filename = path,width = wd,height = ht,res = 300)
+  gg4 <- ggplot(expression_vals, aes(x = seurat_clusters, y = gene))+
+    geom_point(aes(fill = median_expression, size = percentage),shape = 21,stroke=stroke)+
+    theme_classic()+coord_flip()+
+    theme(axis.title = element_blank(),
+          legend.key.size = unit(0.2,"cm"),
+          legend.title = element_text(size = 5),
+          legend.text = element_text(size = 5),
+          axis.text.x = element_text(size = 5.8,angle = 90,hjust = 1),
+          axis.text.y = element_text(size = 5.8,angle = 0,hjust = 1),
+          axis.ticks.x = element_line(colour = 'black', size = 0.3),
+          axis.ticks.y = element_line(colour = 'black', size = 0.3),
+          axis.line = element_line(colour = 'black', size = 0.3))+
+    scale_fill_gradient(low = "white", high = "darkred")+
+    scale_size(range=c(0.5,3.3))+
+    labs(fill = "Expression", size = "Percentage of\npositive cells")
+  plot(gg4)
+  invisible(dev.off())
+  return(gg4)
+}
+
 
 
