@@ -78,7 +78,6 @@ for(i in 1:length(ML)){
                            saveLogFile = "logFit.txt")
   stopCluster(cl)
   registerDoSEQ()
-  print(fitMMF$stats)
   print(Sys.time() - start_time) 
 }
 names(ML.results)<-names(DATA)
