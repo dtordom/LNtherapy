@@ -27,3 +27,27 @@ limma.DEG<-function(data,
   return(DEG)
 }
 
+######################################################################
+## Function to extract sample order in a heatmap
+#' @param exp Gene-expression matrix. Samples in columns and genes in rows
+#' @param met Dataframe with metadata. Samples in rows and variables in 
+#' columns (rownames in metadata and colnames in data must be the same)
+#' @param var variable taken into account to sort samples
+
+orderHeatmap<-function(exp,met,var){
+  
+  vars<-names(table(met[,var]))
+  ordenPats<-NULL
+  for(i in 1:length(vars)){    
+    exp.i<-exp[,rownames(met[met[,var]==vars[i],])]
+    pl<-pheatmap(exp.i,scale="row",show_colnames = F,cluster_cols = T, annotation_col = clin.tmp,
+                 cluster_rows = T, show_rownames = T, border_color = NA,
+                 breaks=seq(-1.5,1.5,length.out = 100), fontsize = 5,
+                 color = colorRampPalette(c("deepskyblue4","white","coral2"))(100))  
+    ordenPats<-c(ordenPats,colnames(exp.i[pl$tree_col$order]))
+  }
+  return(ordenPats)
+}
+
+
+
