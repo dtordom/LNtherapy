@@ -1,0 +1,9 @@
+##########################
+## Get DEG genes beetwen responders/ non-responders
+## R version 4.3.1 (2023-06-16)
+##########################
+
+## Load Gene expression data and metadata from:
+##
+
+load("Dataset.RData")
