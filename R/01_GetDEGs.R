@@ -162,7 +162,12 @@ for(j in 1:length(DEGS)){
 names(PLOTS)<-names(DEGS)
 
 ## Heatmaps
+for(i in 1:length(DATA){
 
+
+
+
+  }
 
 
 ## Ratios
