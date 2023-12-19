@@ -1,1 +1,16 @@
+##########################
+## Association between drug response and clinical variables
+## R version 4.3.1 (2023-06-16)
+##########################
 
+set.seed(123456)
+
+## Load Data
+## https://drive.google.com/drive/folders/15KVn3tckVPZKieCsSZizdi8bAQFZkOIC?usp=sharing
+
+load("DEGS.RData")
+
+DEGS<-list()
+DATA<-list()
+
+##--------------------------------------------------- Step1
