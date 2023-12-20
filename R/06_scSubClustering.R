@@ -58,4 +58,77 @@ p1<-pheatmap(t(mplot),scale="column",cluster_rows = T,cluster_cols = T,
              clustering_method = "complete",fontsize=4.5,border_color="black")
 
 
+##------------------------------------------------------------ Step 3
+## Get Gene-signature expression of response/non-response across clusters
+
+degs<-readRDS("/geneListDEGs.RData")
+
+## degs can be any list of individual genes or gene-signatures
+## I.e. Signatures to functionally annotate the clusters:
+
+# degs<-list("DN4"= c("HOPX","PDE4D","IGHE","SELL"),
+#            "DN3" = c("RHOB","VIM","CTSH"),
+#            "DN2"= c("EMP3","CIB1","PSAP","CD72","DAPP1","HCK","ZEB2","RHOB","TNFRSF1B","FCRL3","FCRL5","FGR","MPP6"),
+#            "DN1" = c("TAGLN2","IGHA2","JCHAIN","IGHA1","S100A10"),
+#            "Cmem2" = c("LTB","TAGLN2","AHNAK","ITGB1","CRIP1","S100A10"),
+#            "Cmem1" = c("LTB","MT-ATP8"),
+#            "Mmem1" = c("LTB","IGHM"),
+#            "Mmem2" = c("LTB","VIM","IGHM","AHNAK",""),
+#            "naive" = c("SELL","PLPP5","FCER2","ILR4","IGHM"),
+#            "trans" = c("VPREB3","IGHD","IIGLL5","TCL1A"))
+
+
+PLOTS<-list()
+count<-1
+maxs<-NULL
+for(i in 1:length(degs)){ 
+  x<-degs[[i]]
+  for(j in 1:length(x)){
+    features<-intersect(x[[j]],rownames(DATA.i@assays$SCT))
+    
+    pbmc <- AddModuleScore(DATA.i,features = list(features),
+                           name= paste0(names(degs)[i],sep="_",names(x)[j]),
+                           nbin = length(features),
+                           assay = "RNA",ctrl = 10)
+    
+    p1<-FeaturePlot(pbmc,features = paste0(names(degs)[i],sep="_",names(x)[j],"1"),
+                    label = TRUE, repel = TRUE,raster = FALSE) +
+      scale_colour_gradient2(
+        low = muted("#132B43"),
+        mid = "#FAFAFA",
+        high = muted("#67041f"),
+        midpoint = 0,
+        space = "Lab",
+        na.value = "#FAFAFA",
+        guide = "colourbar",
+        aesthetics = "colour")
+    
+    metadata<-pbmc@meta.data; metadata<-metadata[,c("seurat_clusters",paste0(names(degs)[i],sep="_",names(x)[j],"1"))]
+    colnames(metadata)<-c("seurat_clusters","value")
+    
+    metadata<- metadata %>%
+      group_by(seurat_clusters) %>%
+      dplyr::summarise(median_expression = median(value)) 
+    
+    m<-as.data.frame(metadata[order(metadata$median_expression,decreasing = T),])
+    colnames(m)<-c("cluster","score")
+    
+    maxs<-c(maxs,max(m$score))
+    names(maxs)[length(maxs)]<- paste0(names(degs)[i],sep="_",names(x[j])) 
+    
+    p2<-ggplot(data=m,mapping = aes(x=cluster, y=score,fill=cluster) ) + 
+      geom_bar(stat="identity",colour="black",size=0.3) + theme_classic()+
+      theme(axis.text.x = element_text(angle=90,vjust = 0.5,hjust = 1))+
+      geom_hline(yintercept =  median(m$score),linetype="dashed",color="black",alpha=0.6,size = 0.5)+
+      scale_fill_manual(values = ClustersColors) +ggtitle(paste0(names(degs)[i],sep="_",names(x)[j]))
+    
+    plots<-list(p1,p2); names(plots)<-c("umap","barr")
+    
+    PLOTS[[count]]<-plots
+    names(PLOTS)[count]<-paste0(names(degs)[i],sep="_",names(x)[j])
+    count<-count+1
+  }
+}
+
+
 
