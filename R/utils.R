@@ -268,5 +268,27 @@ markerDots<-function(seurat,
   return(gg4)
 }
 
-
+#################################################################
+## DEG by cluster
+getDEG<-function(DATA.tmp,selectClusters,filterAdj=T,nameFile){
+  
+  DefaultAssay(DATA.tmp)<-"RNA"
+  DATA.tmp <- SetIdent(DATA.tmp, value = DATA.tmp@meta.data$seurat_clusters) 
+  
+  DATA.tmp<-subset(DATA.tmp,subset = seurat_clusters %in% selectClusters)
+  DATA.tmp@meta.data <- DATA.tmp@meta.data[colnames(DATA.tmp)[DATA.tmp@meta.data$seurat_clusters %in% selectClusters ],]
+  
+  DATA_markers <- FindAllMarkers(object = DATA.tmp, assay = "RNA", only.pos =FALSE,
+                                 min.pct = 0.1, min.diff.pct = 0.05,
+                                 max.cells.per.ident = Inf,print.bar = T,
+                                 do.print = T,return.thresh = 0.05,
+                                 test.use = "t")
+  
+  if(filterAdj){
+    sel<-ifelse(DATA_markers$p_val_adj<=0.05,T,F)
+    DATA_markers<-DATA_markers[sel,]
+  }
+  write.table(DATA_markers,file = nameFile,row.names = F,sep="\t")
+  return(DATA_markers)
+}
 
