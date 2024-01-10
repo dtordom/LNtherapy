@@ -7,8 +7,9 @@ set.seed(123456)
 
 ## Load Data
 ## https://drive.google.com/drive/folders/15KVn3tckVPZKieCsSZizdi8bAQFZkOIC?usp=sharing
-load("ClinicalData.RData")
-load("DEGS.RData") ## Output of 01_GetDEGs.R
+load("ClinicalData.RData") ## Change PATH to file
+load("DEGS.RData") ## Output of 01_GetDEGs.R ## Change PATH to file
+source("utils.R") ## Change PATH to file
 
 ##--------------------------------------------------- Step1
 ## Get significance
