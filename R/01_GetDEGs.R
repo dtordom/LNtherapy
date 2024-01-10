@@ -1,5 +1,5 @@
 ##########################
-## Get DEG genes beetwen responders/ non-responders
+## Get Differentially Expressed Genes (DEGs) beetwen responders/ non-responders
 ## R version 4.3.1 (2023-06-16)
 ##########################
 
@@ -17,7 +17,8 @@ library("ggpubr")
 library("cowplot")
 library("ComplexHeatmap")
 
-load("Dataset.RData")
+load("Dataset.RData") ##Change PATH to file
+source("utils.R") ##Change PATH to file
 
 DEGS<-list()
 DATA<-list()
@@ -26,9 +27,11 @@ DATA<-list()
 ## Get DEGs
 
 ## MMF ------
+## Select samples based on treatment used (info from metadata)
 met.tmp<-metadata[metadata$Drug_group=="MMF" & metadata$Diagnosis!="Healthy",]
 dat.tmp<-data[,rownames(met.tmp)]
 
+## Get DEGs beetwen responders/ non-responders for a drug
 res<-limma.DEG(data=dat.tmp,
                      metadata = met.tmp,
                      covars = ~Sex+Act+MMF_or_AZA_dosis+Prednisone_dosis,
