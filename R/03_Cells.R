@@ -11,11 +11,11 @@ set.seed(123456788)
 
 ## ······································································· Step 1 
 ## Impute cells from Cibersort
-load("DEGS.RData") ## Output of 01_GetDEGs.R
+load("DEGS.RData") ## Output of 01_GetDEGs.R. Change PATH to file
 
 ## Download from google drive, see README file
-source("/cibersort/cibersort.r") 
-lmd22 = read.table('/cibersort/LM22.txt', sep = '\t', header = T, row.names = 1)
+source("/cibersort/cibersort.r") ## Change PATH to file
+lmd22 = read.table('/cibersort/LM22.txt', sep = '\t', header = T, row.names = 1) ## Change PATH to file
 
 lmd22<-lmd22[,c("B.cells.naive","B.cells.memory","Plasma.cells","T.cells.CD8","T.cells.CD4.naive",
                 "T.cells.CD4.memory.resting","T.cells.CD4.memory.activated","T.cells.follicular.helper",
