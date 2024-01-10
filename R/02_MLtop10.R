@@ -11,7 +11,7 @@ library("doParallel")
 
 ## ······································································· Step 1 
 ## Load data
-load("DEGS.RData") ## Output of 01_GetDEGs.R
+load("DEGS.RData") ## Output of 01_GetDEGs.R, change PATH to file
 
 degMMF<-DEGS$MMF[DEGS$MMF$adj.P.Val<=0.05,]
 degAZA<-DEGS$AZA[DEGS$AZA$adj.P.Val<=0.05,]
