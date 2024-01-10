@@ -5,7 +5,7 @@
 ## Get associations between cell proportions and response/non respose to LN drugs
 
 library("ggplot2")
-linrary("ggpubr")
+library("ggpubr")
 library("pheatmap")
 set.seed(123456788)
 
