@@ -5,6 +5,8 @@ Authors: Raúl López-Domínguez, Juan Antonio Villatoro-García, Concepción Ma
 Data required can be downloaded from:
 https://drive.google.com/drive/folders/15KVn3tckVPZKieCsSZizdi8bAQFZkOIC?usp=sharing
 
+Please, see Guide file to learn how to run all the analysis
+
 
 
 
