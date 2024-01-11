@@ -4,7 +4,8 @@
 ## 
 ##############################
 #devtools::install_github("sqjin/CellChat")
-## Aproximate computational time: 
+## Aproximate computational time (testing with 25% of randomly selected cells):
+## NOTE: include all cells has high computational cost
 
 setwd("/rdata/")  ## Change PATH to single cell RData files of each cluster/ cell type 
 
@@ -26,9 +27,9 @@ MET<-NULL
 for(i in 1:length(files)){
   
   load(files[i])
-  #print(i)
-  #random25<-sample(1:ncol(data),ncol(data)*0.4)
-  #data<-data[,random25]
+  ## Use these commented code to test in a subsets of randomly selected cells
+  #randomcells<-sample(1:ncol(data),ncol(data)*0.4) 
+  #data<-data[,randomcells]
   met<-met[colnames(data),]
   
   if(i==1){
