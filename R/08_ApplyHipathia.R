@@ -11,6 +11,7 @@
 library("hipathia")
 library("dbplyr")
 library("stringr")
+library("ggplot2")
 
 load("DEGS.RData")  ## Change PATH to file
 
@@ -96,20 +97,16 @@ colnames(BASE)<-gsub("_base","",colnames(BASE))
 base<-BASE
 
 
-clinResp<-data.frame("id"= c(DATA$mmf.prcr$clin$sampleID,DATA$aza.sri4$clin$sampleID),
-                     "drug"= c(rep("mmf",nrow(DATA$mmf.prcr$clin)),rep("aza",nrow(DATA$aza.sri4$clin))),
-                     "response" = c(DATA$mmf.prcr$clin$Response,DATA$aza.sri4$clin$Response))
+clinResp<-data.frame("id"= c(DATA$MMF$clin$Sample_name,DATA$AZA$clin$Sample_name),
+                     "drug"= c(rep("mmf",nrow(DATA$MMF$clin)),rep("aza",nrow(DATA$AZA$clin))),
+                     "response" = c(DATA$MMF$clin$Response,DATA$AZA$clin$Response))
 
-Results.table<-NULL
-Results.plots<-NULL
 Results.freq<-NULL
-Results.means<-NULL
-
+pvals<-NULL
 for(i in 1:length(drugs.matrix)){
   
   tmp.data<-NULL
   tmp.data<-All.pathways[,str_detect(string = colnames(All.pathways) ,pattern = paste0("_",sep="",names(drugs.matrix)[i]))]
-  #print(tmp.data[1:10,1:4])
   colnames(tmp.data)<-gsub(paste0("_",sep="",names(drugs.matrix)[i]),"",colnames(tmp.data))
   
   x<-CalculateEuclideanDistance(vect1 = tmp.data, vect2 = base) ## Here, changes in transcriptome are calculated as a distance between after and before target inhibition (for each patient)
@@ -142,41 +139,20 @@ for(i in 1:length(drugs.matrix)){
   
   res<-wilcox.test(tmp[tmp$group=="mmf_NO","dist"],tmp[tmp$group=="aza_NO","dist"])$p.value
   
+  pvals<-c(pvals,paste0(names(drugs.matrix)[i],sep="_",res))
   print(paste0(names(drugs.matrix)[i],sep="_",res))
   plot(p1)
- 
+  
 }
 
-names(Results.plots)<-names(drugs.matrix)
+
 rownames(Results.freq)<-names(drugs.matrix)
-rownames(Results.means)<-names(drugs.matrix)
-colnames(Results.freq)<-c("Cl1.freq","Cl2.freq","Cl3.freq")
-colnames(Results.means)<-c("Cl1.mean(sd)","Cl2.mean(sd)","Cl3mean(sd)")
-
-Results.table<-na.omit(Results.table)
-Results.plots<-Results.plots[rownames(Results.table)]
-Results.freq<-Results.freq[rownames(Results.table),]
-
-colnames(Results.table)<-paste0("pval_",sep="",colnames(Results.table))
+colnames(Results.freq)<-c("mmf_NO","mmf_YES","aza_NO","aza_YES")
 
 Results.freq<-round(Results.freq*100,digits = 2)
 
-Results<-cbind(Results.freq,Results.table)
+save.image("HipathiaResults.RData")
+# pvals: pvalues comparing response score for patients non-responders to mmf and aza 
+# Results.freq: Frecuencies of good responders (response imputed score with hipathia) in different group of patients (columns) for each specific targets inhibition (rows)
 
-Results = data.frame("Target"=rownames(Results),Results)
-Results.means<-Results.means[rownames(Results),]
-Results.means = data.frame("Target"=rownames(Results.means),Results.means)
-
-write.table(Results,"hypathiaResults.txt",sep="\t",quote = T,row.names = F)
-write.table(Results.means,"hypathiaMeans.txt",sep="\t",quote = T,row.names = F)
-
-for(i in 1:length(Results.plots)){
-  plot(Results.plots[[i]]$boxplot)
-}
-
-for(i in 1:length(Results.plots)){
-  plot(Results.plots[[i]]$barrplot)
-}
-
-Results.table
 
