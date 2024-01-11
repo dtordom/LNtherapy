@@ -14,6 +14,7 @@ library("stringi")
 library("stringr")
 library("NMF")
 library("biomaRt")
+library("dbplyr")
 
 ##------------------------------------------------------------ Step 1
 ## Load data
