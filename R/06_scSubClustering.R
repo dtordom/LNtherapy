@@ -14,6 +14,24 @@ dataset_metadata<-DATA.i@meta.data
 ##------------------------------------------------------------ Step 1
 ## Clustering
 
+## Define clustering resolution
+All.PostSCT <- FindNeighbors(object = DATA.i,reduction = "pca",assay = "RNA",dims = 1:40)
+All.PostSCT <- FindClusters(object = All.PostSCT, resolution = 0.01)
+All.PostSCT <- FindClusters(object = All.PostSCT, resolution = 0.05)
+All.PostSCT <- FindClusters(object = All.PostSCT, resolution = 0.1)
+All.PostSCT <- FindClusters(object = All.PostSCT, resolution = 0.2)
+All.PostSCT <- FindClusters(object = All.PostSCT, resolution = 0.3)
+All.PostSCT <- FindClusters(object = All.PostSCT, resolution = 0.4)
+All.PostSCT <- FindClusters(object = All.PostSCT, resolution = 0.5)
+All.PostSCT <- FindClusters(object = All.PostSCT, resolution = 0.6)
+All.PostSCT <- FindClusters(object = All.PostSCT, resolution = 0.7)
+All.PostSCT <- FindClusters(object = All.PostSCT, resolution = 0.8)
+All.PostSCT <- FindClusters(object = All.PostSCT, resolution = 0.9)
+All.PostSCT <- FindClusters(object = All.PostSCT, resolution = 1)
+
+unsup.clust.colors <- pal_igv("defaul", alpha = 1)(30)
+clustree(All.PostSCT, prefix = "RNA_snn_res.")
+
 resolution<-0.11 ## Set cluster resolution
 cat("\nPerforming Clustering")
 DATA.i <- FindNeighbors(object = DATA.i,reduction = "pca",dims = 1:40)
