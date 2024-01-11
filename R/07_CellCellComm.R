@@ -1,7 +1,10 @@
-## Aproximate computational time: 
-
-#devtools::install_github("sqjin/CellChat")
+##############################
 ## Cell-Cell comunication using CellChat
+## R version 4.1.0
+## 
+##############################
+#devtools::install_github("sqjin/CellChat")
+## Aproximate computational time: 
 
 setwd("/rdata/")  ## Change PATH to single cell RData files of each cluster/ cell type 
 
@@ -10,6 +13,9 @@ library("stringi")
 library("stringr")
 library("NMF")
 library("biomaRt")
+
+##------------------------------------------------------------ Step 1
+## Load data
 
 files<-list.files()
 files<-files[str_detect(files,"m_")] ## sc data from each cell type clustered 
@@ -37,6 +43,7 @@ for(i in 1:length(files)){
 data<-DATA
 met<-MET
 
+##------------------------------------------------------------ Step 2
 ## Impute cell-cell communications
 cellchat <- createCellChat(object = data, meta = met, group.by = "seurat_clusters")
 future::plan("multisession", workers = 12) # do parallel
@@ -62,6 +69,7 @@ par(mfrow = c(1,2), xpd=TRUE)
 netVisual_circle(cellchat@net$count, vertex.weight = groupSize, weight.scale = T, label.edge= F, title.name = "Number of interactions")
 netVisual_circle(cellchat@net$weight, vertex.weight = groupSize, weight.scale = T, label.edge= F, title.name = "Interaction weights/strength")
 
+##------------------------------------------------------------ Step 3
 ## See all cell-cell communicationd and select manually networks (paths) that connect clusters relevant for non-response to one or another drug.
 paths<-c("SEMA4", "APP", "BAG", "GAS", "FLT3", "BAFF", "IL1", "CCL") 
 
@@ -73,7 +81,6 @@ paths<-c("SEMA4", "APP", "BAG", "GAS", "FLT3", "BAFF", "IL1", "CCL")
 ## GAS: MMF (...)
 ## APP: MMF ---
 ## SEMA4: MMF
-
 
 ## Using biomaRt to translate gene ids from entrez to gene symbol (gene targets form each network/path)
 mart = useMart("ensembl", dataset = paste0(casefold("hsapiens"),"_gene_ensembl"),host="https://jul2019.archive.ensembl.org")
@@ -95,5 +102,4 @@ rownames(DRUG)<-NULL
 colnames(DRUG)<-c("target","entrez")
 
 saveRDS(DRUG,"DRUGS.rds")
-
 
