@@ -12,6 +12,7 @@ library("pheatmap")
 library("ggsci")
 library("clustree")
 library("dplyr")
+library("RColorBrewer")
 
 source("utils.R") ## Change PATH to file
 
