@@ -12,6 +12,8 @@ library("pheatmap")
 library("ggsci")
 library("clustree")
 
+source("utils.R") ## Change PATH to file
+
 DATA.i<-readRDS("Cluster_1.rds") ## Load RDS with clustered cells. Change PATH to file
 dataset_metadata<-DATA.i@meta.data
 
