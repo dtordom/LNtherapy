@@ -4,6 +4,7 @@
 ## 
 ##############################
 ## Example for Cluster 1
+## Aproximate computational time (for bigger cluster): 
 
 library("Seurat")
 library("pheatmap")
