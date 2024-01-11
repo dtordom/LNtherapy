@@ -3,7 +3,7 @@
 ## R version 4.1.0
 ## 
 ##############################
-## Aproximate computational time: 
+## Aproximate computational time: 40 minutes
 
 ##----------------------------------------------------------------------- STEP 1
 ## Load data
