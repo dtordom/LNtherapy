@@ -1,15 +1,15 @@
 ##----------------------------------------------------------------------- STEP 1
 ## Load data
 
-library(hipathia)
+library("hipathia")
 
-load("DEGS.RData")
+load("DEGS.RData")  ## Change PATH to file
 
 H<-data[,rownames(metadata)[metadata$Diagnosis!="SLE"]]
 MMF<-DATA$MMF$data
 AZA<-DATA$AZA$data
 
-drugs<-readRDS("/DRUGS.rds") ## Output 07_CellCellComm
+drugs<-readRDS("/DRUGS.rds") ## Output 07_CellCellComm. ## Change PATH to file
 drugs<-as.data.frame(drugs)
 colnames(drugs)<-c("Target","Entrez")
 
@@ -35,12 +35,10 @@ data.H <- data[,str_detect(string = colnames(data),pattern = "_healthy")]
 data.SLE<-cbind(data.MMF,data.AZA)
 
 ## Add drug modifiers
-
 drugs.matrix<-list()
 for(i in 1:nrow(drugs)){
   
   tmp<-data.SLE
-  
   targets<-as.character(str_split(drugs$Entrez[i],",")[[1]])
   targets<-intersect(rownames(tmp),targets)
   
@@ -55,9 +53,7 @@ for(i in 1:nrow(drugs)){
 
 colnames(data.SLE)<-paste0(colnames(data.SLE),"_base")
 
-
 all.data<-cbind(data.H,data.SLE,do.call("cbind",drugs.matrix))
-
 all.data.norm<-normalize_data(all.data)
 
 ## Get circuits activity
