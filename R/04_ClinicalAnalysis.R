@@ -2,7 +2,7 @@
 ## Association between drug response and clinical variables
 ## R version 4.3.1 (2023-06-16)
 ##########################
-## Aproximate computational time: 
+## Aproximate computational time: 1 minute
 
 set.seed(123456)
 
