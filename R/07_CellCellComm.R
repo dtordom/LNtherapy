@@ -4,7 +4,7 @@
 ## 
 ##############################
 #devtools::install_github("sqjin/CellChat")
-## Aproximate computational time (testing with 25% of randomly selected cells):
+## Aproximate computational time (testing with 25% of randomly selected cells): 1 hour
 ## NOTE: include all cells has high computational cost
 
 setwd("/rdata/")  ## Change PATH to single cell RData files of each cluster/ cell type 
