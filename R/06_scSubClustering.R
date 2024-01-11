@@ -11,6 +11,7 @@ library("Seurat")
 library("pheatmap")
 library("ggsci")
 library("clustree")
+library("dplyr")
 
 source("utils.R") ## Change PATH to file
 
@@ -54,7 +55,7 @@ top<-10
 clusters<-unique(as.character(DATA.i@meta.data$seurat_clusters))
 DATA_markers <-getDEG(DATA.i,filterAdj = T,
                       selectClusters=clusters,
-                      nameFile="/Cluster_1_comparisons.csv")
+                      nameFile="Cluster_1_comparisons.csv") ## Change name to save results
 
 DATA_markers %>% group_by(cluster) %>% top_n(top,avg_log2FC) -> top10
 genes<-unique(top10$gene)
@@ -64,7 +65,7 @@ m<-m[genes,rownames(DATA.i@meta.data)[DATA.i@meta.data$seurat_clusters %in% clus
 x<-DATA_markers
 sel<-ifelse(x$p_val_adj<=0.05,T,F)
 x<-x[sel,]
-write.table(x, row.names = F,file = "/Cluster_1_comparisons.csv",
+write.table(x, row.names = F,file = "Cluster_1_comparisons.csv", ## Change name to save results
             sep="\t",quote = FALSE)
 
 clusterpos<-as.character(DATA.i@meta.data[colnames(m),"seurat_clusters"])
@@ -85,7 +86,7 @@ p1<-pheatmap(t(mplot),scale="column",cluster_rows = T,cluster_cols = T,
 ##------------------------------------------------------------ Step 3
 ## Get Gene-signature expression of response/non-response across clusters
 
-degs<-readRDS("/geneListDEGs.RData") ##Change PATH to file
+degs<-readRDS("geneListDEGs.RData") ##Change PATH to file
 
 ## degs can be any list of individual genes or gene-signatures
 ## I.e. Signatures to functionally annotate the clusters:
