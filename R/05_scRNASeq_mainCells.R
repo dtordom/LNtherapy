@@ -4,7 +4,9 @@
 #' @Rversion R version 4.0.4
 #'
 ################################################################################
-## Aproximate computational time: 
+## Aproximate computational time: 2-3 hours
+## Note: processing single cell data from raw data has a high computational cost.
+## This process was carried out in a local computational cluster (SO: Ubuntu 20)
 
 ##----------------------------------------------------------············· STEP 0
 ## Setting environment
@@ -78,6 +80,10 @@ human = useMart("ensembl", dataset = "hsapiens_gene_ensembl",host="https://jul20
 
 ##----------------------------------------------------------············· STEP 1
 ## Load data
+
+## RAW data was downloaded from https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE135779.
+## Please, revise and change the folders names in the code to make sure that the script localice 
+## the filtered_feature_bc_matrix files.
 
 dataset_metadata <- as.data.frame(read.csv(opt$metadataPath))
 rownames(dataset_metadata)<-dataset_metadata$dataset
