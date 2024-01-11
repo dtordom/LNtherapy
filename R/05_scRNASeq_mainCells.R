@@ -413,7 +413,7 @@ All.PostSCT <- FindClusters(object = All.PostSCT, resolution = 0.9)
 All.PostSCT <- FindClusters(object = All.PostSCT, resolution = 1)
 
 unsup.clust.colors <- pal_igv("defaul", alpha = 1)(30)
-clustree(All.PostSCT, prefix = "RNA_snn_res.")
+clustree(All.PostSCT, prefix = "SCT_snn_res.")
 
 # 0.1 ...
 cat("\nPerforming Clustering")
