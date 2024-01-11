@@ -90,6 +90,12 @@ p1<-pheatmap(t(mplot),scale="column",cluster_rows = T,cluster_cols = T,
 
 degs<-readRDS("geneListDEGs.rds") ##Change PATH to file
 
+## Change/add colors as you wish
+ClustersColors<-c("0"="#6fa2fa","1"="#fba996","2"="#17489d",
+                  "3"="#00bec4","4"="#3aa95c","5"="#c97bfc",
+                  "6"="#d98293","7"="#1b5b2f","8"="#f1562a",
+                  "9"="#f3b465","10"="#a9182d")
+
 ## degs can be any list of individual genes or gene-signatures
 ## I.e. Signatures to functionally annotate the clusters:
 
