@@ -4,7 +4,7 @@
 ## 
 ##############################
 ## Example for Cluster 1
-## Aproximate computational time (for cluster of B cells): 
+## Aproximate computational time (for cluster of B cells): 7-8 minutes
 ## Time depend on number of cells analyzed
 
 library("Seurat")
