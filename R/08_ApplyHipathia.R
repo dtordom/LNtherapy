@@ -9,6 +9,8 @@
 ## Load data
 
 library("hipathia")
+library("dbplyr")
+library("stringr")
 
 load("DEGS.RData")  ## Change PATH to file
 
