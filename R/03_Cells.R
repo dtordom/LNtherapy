@@ -3,6 +3,7 @@
 ## R version 4.3.1 (2023-06-16)
 ##########################
 ## Get associations between cell proportions and response/non respose to LN drugs
+## Aproximate computational time: 
 
 library("ggplot2")
 library("ggpubr")
