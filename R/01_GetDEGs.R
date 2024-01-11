@@ -264,7 +264,7 @@ ggplot(M,aes(x=pathway,y=Drug))+theme_linedraw()+
 
 
 ## 2. Comparison between results using different response metrics (UrCrPrRatio and SRI-4)
-MMFresp2<-readRDS("MMF_resp2.rds")
+MMFresp2<-readRDS("MMF_resp2.rds") ##Change PATH to file
 res<-limma.DEG(data=MMFresp2$MMF_resp2$data,
                metadata = MMFresp2$MMF_resp2$clin,
                covars = ~sex+act+mmfDosis+prednisone,
