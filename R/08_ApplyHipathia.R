@@ -1,3 +1,8 @@
+##############################
+## Using hipathia to get theorethical response to target inhibitions
+## R version 4.1.0
+## 
+##############################
 ## Aproximate computational time: 
 
 ##----------------------------------------------------------------------- STEP 1
