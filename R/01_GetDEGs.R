@@ -91,6 +91,7 @@ DEGS[["SOC"]]<-res
 DATA[["SOC"]]<-data.list
 
 rm(list=setdiff(ls(),c("DATA","DEGS","metadata","data")))
+source("utils.R") ##Change PATH to file
 
 ## Preparing Gene-signatures
 degs<-list()
@@ -128,8 +129,10 @@ saveRDS(degs,"geneListDEGs.rds")
 rm(list=setdiff(ls(),c("DATA","DEGS","metadata","data","degs")))
 save.image("DEGS.RData")
 
+
 ##--------------------------------------------------- Step2
 ## PLOTS (UpSet, Volcano, Heatmap, Ratios
+source("utils.R") ##Change PATH to file
 
 ## UpSet plot
 lt = list(MMF = unname(as.character(unlist(degs$mmf))),
