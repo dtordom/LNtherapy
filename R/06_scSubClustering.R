@@ -8,7 +8,7 @@
 library("Seurat")
 library("pheatmap")
 
-DATA.i<-readRDS("Cluster_1.rds") ## Load RDS with clustered cells
+DATA.i<-readRDS("Cluster_1.rds") ## Load RDS with clustered cells. Change PATH to file
 dataset_metadata<-DATA.i@meta.data
 
 ##------------------------------------------------------------ Step 1
