@@ -2,6 +2,7 @@
 ## Get Differentially Expressed Genes (DEGs) beetwen responders/ non-responders
 ## R version 4.3.1 (2023-06-16)
 ##########################
+## Approximate computing time: 4-5 minutes
 
 ## Load Gene expression data and metadata from:
 ## https://drive.google.com/drive/folders/15KVn3tckVPZKieCsSZizdi8bAQFZkOIC?usp=sharing
@@ -292,8 +293,8 @@ p2
 library("qusage")
 library("tmod")
 library("stringi")
-
-load("sysdata.rda") ## File contains tmod (and others) database
+data(tmod)
+load("sysdata.rda") ## File contains tmod (and others) database. Change PATH to file
 ## Conection between genes and functional pathways
 
 QS.results<-list()
