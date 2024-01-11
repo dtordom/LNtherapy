@@ -13,6 +13,7 @@ library("ggsci")
 library("clustree")
 library("dplyr")
 library("RColorBrewer")
+library("scales")
 
 source("utils.R") ## Change PATH to file
 
@@ -87,7 +88,7 @@ p1<-pheatmap(t(mplot),scale="column",cluster_rows = T,cluster_cols = T,
 ##------------------------------------------------------------ Step 3
 ## Get Gene-signature expression of response/non-response across clusters
 
-degs<-readRDS("geneListDEGs.RData") ##Change PATH to file
+degs<-readRDS("geneListDEGs.rds") ##Change PATH to file
 
 ## degs can be any list of individual genes or gene-signatures
 ## I.e. Signatures to functionally annotate the clusters:
