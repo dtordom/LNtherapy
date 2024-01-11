@@ -4,10 +4,13 @@
 ## 
 ##############################
 ## Example for Cluster 1
-## Aproximate computational time (for bigger cluster): 
+## Aproximate computational time (for cluster of B cells): 
+## Time depend on number of cells analyzed
 
 library("Seurat")
 library("pheatmap")
+library("ggsci")
+library("clustree")
 
 DATA.i<-readRDS("Cluster_1.rds") ## Load RDS with clustered cells. Change PATH to file
 dataset_metadata<-DATA.i@meta.data
